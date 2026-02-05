@@ -46,10 +46,31 @@ def check_disk():
         f"Disk Usage (C:): {disk.percent}%\n"
         f"Free Space: {free_gb:.2f} GB"
     )
+    
+def check_top_processes():
+    """
+    Returns the top 5 processes consuming the most RAM.
+    """
+    processes = []
+    for proc in psutil.process_iter(['pid', 'name', 'memory_info']):
+        try:
+            processes.append(proc.info)
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            pass
+    
+    top_5 = sorted(processes, key=lambda p: p['memory_info'].rss, reverse=True)[:5]
+    
+    result = "Top 5 Memory Hogs:\n"
+    for p in top_5:
+        mem_mb = p['memory_info'].rss / (1024 * 1024) # Convert to MB
+        result += f"- {p['name']} (PID: {p['pid']}): {mem_mb:.2f} MB\n"
+        
+    return result
 
 tool_registry = {
     "get_system_info": get_system_info,
     "check_cpu": check_cpu,
     "check_ram": check_ram,
-    "check_disk": check_disk
+    "check_disk": check_disk,
+    "check_top_processes":check_top_processes
 }
