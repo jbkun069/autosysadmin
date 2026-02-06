@@ -1,6 +1,7 @@
 import psutil
 import platform
 import socket
+import subprocess
 
 def get_system_info():
     """
@@ -67,10 +68,26 @@ def check_top_processes():
         
     return result
 
+def check_internet():
+    """
+    Checks internet connectivity by pinging Google.
+    """
+    try:
+        output = subprocess.check_output(["ping", "-n", "1", "8.8.8.8"], text=True)
+        
+        if "Received = 1" in output:
+            return "Internet is ONLINE. Ping successful."
+        else:
+            return "Internet seems unstable (Packet loss)."
+            
+    except subprocess.CalledProcessError:
+        return "Internet is OFFLINE. Ping failed."
+
 tool_registry = {
     "get_system_info": get_system_info,
     "check_cpu": check_cpu,
     "check_ram": check_ram,
     "check_disk": check_disk,
-    "check_top_processes":check_top_processes
+    "check_top_processes":check_top_processes,
+    "check_internet":check_internet
 }
