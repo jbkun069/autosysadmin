@@ -1,6 +1,6 @@
 # 🤖 Project: Auto-SysAdmin (Local Agentic AI)
 
-> **One-Liner:** A privacy-first, autonomous AI agent that investigates and diagnoses computer issues (CPU, RAM, Disk) by executing real Python scripts on a local machine without internet access.
+> An autonomous AI agent that investigates and diagnoses computer issues (CPU, RAM, Disk) by executing real Python scripts on a local machine without internet access.
 
 ### 🛠️ Tech Stack
 
