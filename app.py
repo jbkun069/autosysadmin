@@ -1,14 +1,32 @@
 import streamlit as st # type: ignore
 import ollama # type: ignore
 import re
+import json
+import os
 from tools import tool_registry
 from prompts import get_system_prompt
 
 MODEL_NAME = "phi3"
+HISTORY_FILE = "chat_history.json"
 
 st.set_page_config(page_title="Auto-SysAdmin AI", page_icon="🤖")
 st.title("🤖 Auto-SysAdmin Agent")
 st.caption("A Local Neuro-Symbolic Agent running on Phi-3")
+
+def load_history():
+    """Loads chat history from a local JSON file if it exists."""
+    if os.path.exists(HISTORY_FILE):
+        try:
+            with open(HISTORY_FILE, "r") as f:
+                return json.load(f)
+        except:
+            return [] 
+    return []
+
+def save_history():
+    """Saves the current session state to a local JSON file."""
+    with open(HISTORY_FILE, "w") as f:
+        json.dump(st.session_state.messages, f)
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
