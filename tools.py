@@ -72,10 +72,13 @@ def check_internet():
     """
     Checks internet connectivity by pinging Google.
     """
+    # Detect OS to select correct ping flag
+    param = '-n' if platform.system().lower() == 'windows' else '-c'
+    
     try:
-        output = subprocess.check_output(["ping", "-n", "1", "8.8.8.8"], text=True)
+        output = subprocess.check_output(["ping", param, "1", "8.8.8.8"], text=True)
         
-        if "Received = 1" in output:
+        if "TTL=" in output or "ttl=" in output:
             return "Internet is ONLINE. Ping successful."
         else:
             return "Internet seems unstable (Packet loss)."
