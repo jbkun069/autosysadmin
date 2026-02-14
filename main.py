@@ -63,6 +63,12 @@ def run():
             if tool_name:
                 print(f"[Agent] Decided to run: {tool_name}")
                 
+                if len(conversation_history) > 1:
+                    last_msg = conversation_history[-1]
+                    
+                    if last_msg['role'] == 'user' and "Observation:" in last_msg['content']:
+                        pass
+                
                 if tool_name in tool_registry:
                     try:
                         
