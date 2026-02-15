@@ -54,9 +54,11 @@ pip install -r requirements.txt
 **3. Usage**
 
 ```bash
-python main.py
-# Type: "Why is my laptop fan spinning so fast?"
-
+streamlit run app.py
 ```
+```bash
+To run the CLI version:
 
+python main.py
+```
 ---
