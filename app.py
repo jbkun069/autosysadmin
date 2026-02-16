@@ -33,8 +33,6 @@ with st.sidebar:
 
     st.divider()
     st.markdown(f"**Model:** `{MODEL_NAME}`")
-    st.markdown(f"**Tools:** `{len(tool_registry)}` available")
-
 
 def load_history():
     if os.path.exists(HISTORY_FILE):
