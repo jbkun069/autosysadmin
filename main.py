@@ -48,46 +48,46 @@ def run():
        
         conversation_history.append({'role': 'user', 'content': user_input})
 
+        last_action = None
       
         for turn in range(5):
             
             
             ai_msg = think_and_act(conversation_history)
             
-            
-            conversation_history.append({'role': 'assistant', 'content': ai_msg})
-            
-           
             tool_name = parse_action(ai_msg)
             
             if tool_name:
-                print(f"[Agent] Decided to run: {tool_name}")
                 
-                if len(conversation_history) > 1:
-                    last_msg = conversation_history[-1]
-                    
-                    if last_msg['role'] == 'user' and "Observation:" in last_msg['content']:
-                        pass
+                if tool_name == last_action:
+                    error_msg = "Error: You are repeating the same action. Please provide a final answer based on the data you already have."
+                    conversation_history.append({'role': 'assitant', 'content': ai_msg})
+                    conversation_history.append({'role': 'user', 'content': error_msg})
+                    print("[System] Loop detected. Forcing AI to stop.")
+                    continue
+                
+                last_action = tool_name
+                
+                print(f"[Agent] Decided to run: {tool_name}")
                 
                 if tool_name in tool_registry:
                     try:
-                        
                         tool_output = tool_registry[tool_name]()
                         print(f"[Tool Output] {tool_output}")
                         
-                        observation_msg = f"Observation: {tool_output}"
-                        conversation_history.append({'role': 'user', 'content': observation_msg})
-                        
+                        conversation_history.append({'role': 'assistant', 'content': ai_msg})
+                        conversation_history.append({'role': 'user', 'content': f"Observation: {tool_output}"})
                         continue 
-                        
                     except Exception as e:
-                        print(f"[Error] Tool failed: {e}")
-                        conversation_history.append({'role': 'user', 'content': f"Error: {e}"})
+                        conversation_history.append({'role': 'user', 'content': f"Error: Tool failed with {e}"})
                 else:
-                    print(f"[Error] Tool '{tool_name}' not found in registry.")
-                    conversation_history.append({'role': 'user', 'content': f"Error: Tool {tool_name} does not exist."})
-            
+                    
+                    msg = f"Error: Tool '{tool_name}' does not exist. Do not try to use it again. Answer based on your knowledge or ask for help."
+                    conversation_history.append({'role': 'user', 'content': msg})
+                    print(f"[Error] AI hallucinated tool: {tool_name}")
             else:
+               
+                conversation_history.append({'role': 'assistant', 'content': ai_msg})
                 print(f"\n[AI] {ai_msg}")
                 break
 
