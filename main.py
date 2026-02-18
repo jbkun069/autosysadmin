@@ -3,7 +3,6 @@ import re
 from tools import tool_registry
 from prompts import get_system_prompt
 
-# --- CONFIGURATION ---
 MODEL_NAME = "phi3"  
 
 def think_and_act(history):

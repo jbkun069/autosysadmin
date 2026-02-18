@@ -1,25 +1,23 @@
-import streamlit as st
-import ollama
+import streamlit as st # type: ignore
+import ollama # type: ignore
 import re
 import json
 import os
 from tools import tool_registry
 from prompts import get_system_prompt
 
-# --- CONFIGURATION ---
 MODEL_NAME = "phi3"
 HISTORY_FILE = "chat_history.json"
 
-# --- PAGE SETUP ---
 st.set_page_config(
     page_title="Auto-SysAdmin AI",
     page_icon="🤖",
     layout="centered"
 )
 st.title("🤖 Auto-SysAdmin Agent")
-st.caption("A Local Neuro-Symbolic Agent | Clean Interface")
+st.caption("A Local Neuro-Symbolic Agent")
 
-# --- SIDEBAR ---
+
 with st.sidebar:
     st.header("⚙️ Controls")
     if st.button("🗑️ Reset Memory", use_container_width=True):
