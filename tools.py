@@ -47,6 +47,17 @@ def check_disk():
         f"Disk Usage (C:): {disk.percent}%\n"
         f"Free Space: {free_gb:.2f} GB"
     )
+
+def check_ddrive():
+    """
+    Returns usage of the D:Drive
+    """
+    disk = psutil.disk_usage('D:\\')
+    free_gb = disk.free / (1024 ** 3)
+    return (
+        f"Disk Usage (D:): {disk.percent}%\n"
+        f"Free Space: {free_gb:.2f} GB"
+    )
     
 def check_top_processes():
     """
@@ -91,6 +102,7 @@ tool_registry = {
     "check_cpu": check_cpu,
     "check_ram": check_ram,
     "check_disk": check_disk,
+    "check_ddrive": check_ddrive,
     "check_top_processes":check_top_processes,
     "check_internet":check_internet
 }
