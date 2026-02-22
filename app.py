@@ -37,7 +37,6 @@ def load_history():
         try:
             with open(HISTORY_FILE, "r") as f:
                 data = json.load(f)
-                # Validate that history is a non-empty list with correct structure
                 if isinstance(data, list) and len(data) > 0:
                     return data
                 return []
@@ -89,7 +88,7 @@ def run_react_loop(user_input):
     with st.chat_message("assistant"):
         last_action = None
 
-        for turn in range(5):
+        for turn in range(3):
             with st.spinner(""):
                 ai_msg, error = call_model()
 
