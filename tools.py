@@ -12,7 +12,8 @@ def get_system_info():
         f"System: {uname.system} {uname.release}\n"
         f"Node Name: {uname.node}\n"
         f"Machine: {uname.machine}\n"
-        f"Processor: {uname.processor}"
+        f"Processor: {uname.processor}\n"
+        f"Version: {uname.version}"
     )
     return info
 
