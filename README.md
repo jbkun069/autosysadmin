@@ -53,12 +53,17 @@ pip install -r requirements.txt
 
 **3. Usage**
 
+**Web UI (Recommended)**
+
+Run the Streamlit-based graphical interface.
 ```bash
 streamlit run app.py
 ```
-```bash
-To run the CLI version:
 
+**CLI Version**
+
+Run the command-line interface for a terminal-based experience.
+```bash
 python main.py
 ```
 ---
