@@ -59,7 +59,7 @@ def run():
                 
                 if tool_name == last_action:
                     error_msg = "Error: You are repeating the same action. Please provide a final answer based on the data you already have."
-                    conversation_history.append({'role': 'assitant', 'content': ai_msg})
+                    conversation_history.append({'role': 'assistant', 'content': ai_msg})  # Fixed typo
                     conversation_history.append({'role': 'user', 'content': error_msg})
                     print("[System] Loop detected. Forcing AI to stop.")
                     continue
