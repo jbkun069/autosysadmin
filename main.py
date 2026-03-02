@@ -2,8 +2,7 @@ import ollama # type: ignore
 import re
 from tools import tool_registry
 from prompts import get_system_prompt
-
-MODEL_NAME = "phi3"  
+from config import MODEL_NAME, MAX_TURNS
 
 def think_and_act(history):
     """
@@ -49,7 +48,7 @@ def run():
 
         last_action = None
       
-        for turn in range(5):
+        for turn in range(MAX_TURNS):
             
             
             ai_msg = think_and_act(conversation_history)

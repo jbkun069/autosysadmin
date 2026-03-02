@@ -5,9 +5,7 @@ import json
 import os
 from tools import tool_registry
 from prompts import get_system_prompt
-
-MODEL_NAME = "phi3"
-HISTORY_FILE = "chat_history.json"
+from config import MODEL_NAME, HISTORY_FILE, MAX_TURNS
 
 st.set_page_config(
     page_title="Auto-SysAdmin AI",
@@ -88,7 +86,7 @@ def run_react_loop(user_input):
     with st.chat_message("assistant"):
         last_action = None
 
-        for turn in range(3):
+        for turn in range(MAX_TURNS):
             with st.spinner(""):
                 ai_msg, error = call_model()
 
