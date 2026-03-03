@@ -42,6 +42,10 @@ def run():
         if user_input.lower() in ["exit", "quit"]:
             print("Shutting down agent.")
             break
+
+        if not user_input.strip(): 
+            print("[System] Empty input. Please type a message.")
+            continue
             
        
         conversation_history.append({'role': 'user', 'content': user_input})

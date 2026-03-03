@@ -174,4 +174,8 @@ for msg in st.session_state.messages:
                 st.markdown(msg["content"])
 
 if prompt := st.chat_input("Ask your SysAdmin..."):
-    run_react_loop(prompt)
+    if prompt.strip():
+        run_react_loop(prompt)
+    else:
+        st.toastStar("Please enter a message.", icon="⚠️")
+        

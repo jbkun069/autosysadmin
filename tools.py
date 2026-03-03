@@ -2,6 +2,7 @@ import psutil
 import platform
 import socket
 import subprocess
+import os 
 
 def get_system_info():
     """
@@ -53,6 +54,9 @@ def check_ddrive():
     """
     Returns usage of the D:Drive
     """
+    if os.path.exists('D:\\'):
+        return "NO D: Drive on this system"
+    
     disk = psutil.disk_usage('D:\\')
     free_gb = disk.free / (1024 ** 3)
     return (
