@@ -30,7 +30,7 @@ def check_ram():
     Returns the current Memory (RAM) usage stats.
     """
     mem = psutil.virtual_memory()
-    total_gb = mem.total / (1024 ** 3) #converting bytes to gigabytes for readability
+    total_gb = mem.total / (1024 ** 3) 
     available_gb = mem.available / (1024 ** 3)
     
     return (
@@ -79,7 +79,7 @@ def check_top_processes():
     
     result = "Top 5 Memory Hogs:\n"
     for p in top_5:
-        mem_mb = p['memory_info'].rss / (1024 * 1024) # Convert to MB
+        mem_mb = p['memory_info'].rss / (1024 * 1024) 
         result += f"- {p['name']} (PID: {p['pid']}): {mem_mb:.2f} MB\n"
         
     return result
