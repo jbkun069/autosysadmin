@@ -1,6 +1,6 @@
 import ollama # type: ignore
 import re
-from tools import tool_registry
+from tools import tool_registry, parse_action
 from prompts import get_system_prompt
 from config import MODEL_NAME, MAX_TURNS
 
@@ -15,17 +15,6 @@ def think_and_act(history):
     ai_msg = response['message']['content']
     
     return ai_msg
-
-def parse_action(ai_msg):
-    """
-    Scans the AI message for 'Action: tool_name'.
-    Returns the tool name if found, otherwise None.
-    """
-    
-    match = re.search(r"Action:\s*(\w+)", ai_msg, re.IGNORECASE)
-    if match:
-        return match.group(1) 
-    return None
 
 def run():
     print("--- AUTO-SYSADMIN AGENT ONLINE ---")
@@ -53,7 +42,7 @@ def run():
         last_action = None
       
         for turn in range(MAX_TURNS):
-            
+            print(f"[Turn {turn + 1}/{MAX_TURNS}]")
             
             ai_msg = think_and_act(conversation_history)
             

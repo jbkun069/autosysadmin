@@ -3,7 +3,7 @@ import ollama # type: ignore
 import re
 import json
 import os
-from tools import tool_registry
+from tools import tool_registry, parse_action
 from prompts import get_system_prompt
 from config import MODEL_NAME, HISTORY_FILE, MAX_TURNS
 
@@ -59,12 +59,6 @@ if "messages" not in st.session_state:
             {"role": "system", "content": get_system_prompt()}
         ]
 
-def parse_action(ai_msg):
-    match = re.search(r"Action:\s*(\w+)", ai_msg, re.IGNORECASE)
-    if match:
-        return match.group(1)
-    return None
-
 def call_model():
     """Wraps ollama.chat with error handling to prevent crashes."""
     try:
@@ -86,7 +80,7 @@ def run_react_loop(user_input):
     with st.chat_message("assistant"):
         last_action = None
 
-        for turn in range(MAX_TURNS):
+        for _ in range(MAX_TURNS):
             with st.spinner(""):
                 ai_msg, error = call_model()
 
@@ -99,7 +93,7 @@ def run_react_loop(user_input):
             st.session_state.messages.append({"role": "assistant", "content": ai_msg})
             save_history()
 
-            tool_name = parse_action(ai_msg)
+            tool_name = parse_action(ai_msg) if ai_msg else None
 
             if tool_name:
                 if tool_name == last_action:

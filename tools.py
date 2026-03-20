@@ -3,6 +3,7 @@ import platform
 import socket
 import subprocess
 import os 
+import re
 
 def get_system_info():
     """
@@ -17,6 +18,16 @@ def get_system_info():
         f"Version: {uname.version}"
     )
     return info
+
+def parse_action(text: str) -> str | None:
+    """
+    Scans the AI message for 'Action: tool_name'.
+    Returns the tool name if found, otherwise None.
+    """
+    match = re.search(r"Action:\s*(\w+)", text, re.IGNORECASE)
+    if match:
+        return match.group(1)
+    return None
 
 def check_cpu():
     """
