@@ -65,7 +65,7 @@ def check_ddrive():
     """
     Returns usage of the D:Drive
     """
-    if os.path.exists('D:\\'):
+    if not os.path.exists('D:\\'):
         return "NO D: Drive on this system"
     
     disk = psutil.disk_usage('D:\\')

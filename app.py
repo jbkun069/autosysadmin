@@ -171,5 +171,4 @@ if prompt := st.chat_input("Ask your SysAdmin..."):
     if prompt.strip():
         run_react_loop(prompt)
     else:
-        st.toastStar("Please enter a message.", icon="⚠️")
-        
+        st.toast("Please enter a message.", icon="⚠️")
