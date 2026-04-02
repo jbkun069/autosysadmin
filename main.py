@@ -1,84 +1,50 @@
-import ollama # type: ignore
-import re
+from google import genai # type: ignore
+from google.genai import types # type: ignore
 from tools import tool_registry, parse_action
 from prompts import get_system_prompt
 from config import MODEL_NAME, MAX_TURNS
 
-def think_and_act(history):
-    """
-    The core function that runs ONE turn of the conversation.
-    Returns: (text_response, stop_signal)
-    """
-    print("\n[Brain] Thinking...")
-    
-    response = ollama.chat(model=MODEL_NAME, messages=history)
-    ai_msg = response['message']['content']
-    
-    return ai_msg
+client = genai.Client(http_options={'api_version': 'v1beta'})
 
 def run():
-    print("--- AUTO-SYSADMIN AGENT ONLINE ---")
+    print("AUTO-SYSADMIN ONLINE")
     print("Type 'exit' to quit.\n")
 
-
-    conversation_history = [
-        {'role': 'system', 'content': get_system_prompt()}
-    ]
+    chat = client.chats.create(
+        model=MODEL_NAME,
+        config=types.GenerateContentConfig(
+            system_instruction=get_system_prompt(),
+            temperature=0.1 
+        )
+    )
 
     while True:
-       
         user_input = input("\nUser: ")
         if user_input.lower() in ["exit", "quit"]:
-            print("Shutting down agent.")
             break
 
-        if not user_input.strip(): 
-            print("[System] Empty input. Please type a message.")
-            continue
-            
-       
-        conversation_history.append({'role': 'user', 'content': user_input})
-
-        last_action = None
-      
+        current_input = user_input
+        
         for turn in range(MAX_TURNS):
-            print(f"[Turn {turn + 1}/{MAX_TURNS}]")
+            print(f"[Turn {turn + 1}/{MAX_TURNS}] Thinking...")
             
-            ai_msg = think_and_act(conversation_history)
-            
+            try:
+                response = chat.send_message(current_input)
+                ai_msg = response.text
+            except Exception as e:
+                print(f"[Error] API Call Failed: {e}")
+                break
+
             tool_name = parse_action(ai_msg)
             
-            if tool_name:
+            if tool_name and tool_name in tool_registry:
+                print(f"[Agent] Action: {tool_name}")
+                result = tool_registry[tool_name]()
+                print(f"[Tool] Result: {result}")
                 
-                if tool_name == last_action:
-                    error_msg = "Error: You are repeating the same action. Please provide a final answer based on the data you already have."
-                    conversation_history.append({'role': 'assistant', 'content': ai_msg})  # Fixed typo
-                    conversation_history.append({'role': 'user', 'content': error_msg})
-                    print("[System] Loop detected. Forcing AI to stop.")
-                    continue
-                
-                last_action = tool_name
-                
-                print(f"[Agent] Decided to run: {tool_name}")
-                
-                if tool_name in tool_registry:
-                    try:
-                        tool_output = tool_registry[tool_name]()
-                        print(f"[Tool Output] {tool_output}")
-                        
-                        conversation_history.append({'role': 'assistant', 'content': ai_msg})
-                        conversation_history.append({'role': 'user', 'content': f"Observation: {tool_output}"})
-                        continue 
-                    except Exception as e:
-                        conversation_history.append({'role': 'user', 'content': f"Error: Tool failed with {e}"})
-                else:
-                    
-                    msg = f"Error: Tool '{tool_name}' does not exist. Do not try to use it again. Answer based on your knowledge or ask for help."
-                    conversation_history.append({'role': 'user', 'content': msg})
-                    print(f"[Error] AI hallucinated tool: {tool_name}")
+                current_input = f"Observation: {result}"
+                continue
             else:
-               
-                conversation_history.append({'role': 'assistant', 'content': ai_msg})
                 print(f"\n[AI] {ai_msg}")
                 break
 
