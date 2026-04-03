@@ -1,11 +1,17 @@
 import streamlit as st # type: ignore
-import ollama # type: ignore
 import re
 import json
 import os
+from dotenv import load_dotenv
+
+from google import genai # type: ignore
+from google.genai import types # type: ignore
+
 from tools import tool_registry, parse_action
 from prompts import get_system_prompt
 from config import MODEL_NAME, HISTORY_FILE, MAX_TURNS
+
+load_dotenv()
 
 st.set_page_config(
     page_title="Auto-SysAdmin AI",
@@ -13,7 +19,7 @@ st.set_page_config(
     layout="centered"
 )
 st.title("🤖 Auto-SysAdmin Agent")
-st.caption("A Local Neuro-Symbolic Agent")
+st.caption("A Local Neuro-Symbolic Agent (Powered by Gemini)")
 
 
 with st.sidebar:
@@ -49,7 +55,6 @@ def save_history():
     except IOError:
         pass
 
-
 if "messages" not in st.session_state:
     saved_msgs = load_history()
     if saved_msgs:
@@ -60,14 +65,34 @@ if "messages" not in st.session_state:
         ]
 
 def call_model():
-    """Wraps ollama.chat with error handling to prevent crashes."""
+    """Wraps Gemini API with error handling."""
     try:
-        response = ollama.chat(model=MODEL_NAME, messages=st.session_state.messages)
-        return response['message']['content'], None
-    except ollama.ResponseError as e:
-        return None, f"Model error: {e}"
+        client = genai.Client(http_options={'api_version': 'v1beta'})
+        gemini_history = []
+        for msg in st.session_state.messages:
+            if msg["role"] == "system":
+                continue 
+            
+            role = "model" if msg["role"] == "assistant" else "user"
+            gemini_history.append(
+                types.Content(
+                    role=role, 
+                    parts=[types.Part.from_text(text=msg["content"])]
+                )
+            )
+
+        response = client.models.generate_content(
+            model=MODEL_NAME,
+            contents=gemini_history,
+            config=types.GenerateContentConfig(
+                system_instruction=get_system_prompt(),
+                temperature=0.1 
+            )
+        )
+        return response.text, None
+
     except Exception as e:
-        return None, f"Connection error: {e}. Is Ollama running?"
+        return None, f"Gemini API Error: {e}"
 
 def run_react_loop(user_input):
     
@@ -81,7 +106,7 @@ def run_react_loop(user_input):
         last_action = None
 
         for _ in range(MAX_TURNS):
-            with st.spinner(""):
+            with st.spinner("Thinking..."):
                 ai_msg, error = call_model()
 
             if error:
