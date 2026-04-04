@@ -5,8 +5,7 @@ An autonomous AI agent designed to investigate and diagnose local computer issue
 ## Technology Stack
 
 *   **Core Language:** Python 3.10+
-*   **Inference Engine:** **Ollama** (Local Inference Server)
-*   **Model:** **Phi-3 Mini** (3.8B Parameters, 4-bit Quantized)
+*   **Inference Engine:** **Gemini**
 *   **System Tools:** `psutil` (Cross-platform system monitoring)
 *   **Architecture:** **ReAct** (Reasoning + Acting) Loop
 
@@ -21,7 +20,7 @@ This project implements a **Neuro-Symbolic** architecture, combining a probabili
 
 ## Key Features
 
-*   **Offline Operation:** Runs entirely on a local consumer-grade CPU, requiring no GPU or paid cloud APIs.
+*   **Flexible Inference:** Can be configured to use different models, including cloud-based APIs like Gemini.
 *   **Grounding & Hallucination Resistance:** The agent is architected to rely on real-time data from system tools. It cannot invent system statistics; it must measure them.
 *   **Autonomous Tool Use:** Implements a custom function-calling protocol using simple, reliable Regex parsing, allowing the LLM to trigger actions.
 *   **Sandboxed Execution:** The agent's capabilities are strictly limited to the functions explicitly whitelisted in the `tool_registry`, ensuring it cannot perform unauthorized actions.
@@ -31,10 +30,9 @@ This project implements a **Neuro-Symbolic** architecture, combining a probabili
 ### Prerequisites
 
 *   Python 3.10 or newer.
-*   [Ollama](https://ollama.com) installed and running.
-*   The required model pulled via Ollama:
-    ```bash
-    ollama pull phi3
+*   A Google AI API key with access to the Gemini API. The key should be stored in a `.env` file in the project root:
+    ```
+    GOOGLE_API_KEY="your_api_key_here"
     ```
 
 ### Installation
