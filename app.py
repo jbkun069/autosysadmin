@@ -21,12 +21,21 @@ st.set_page_config(
 st.title("🤖 Auto-SysAdmin Agent")
 st.caption("A Local Neuro-Symbolic Agent (Powered by Gemini)")
 
+@st.cache_resource
+def get_client():
+    """Cached function to get the Gemini client."""
+    return genai.Client(http_options={'api_version': 'v1beta'})
+
+@st.cache_data
+def cached_system_prompt():
+    """Cached function to get the system prompt."""
+    return get_system_prompt()
 
 with st.sidebar:
     st.header("⚙️ Controls")
     if st.button("🗑️ Reset Memory", use_container_width=True):
         st.session_state.messages = [
-            {"role": "system", "content": get_system_prompt()}
+            {"role": "system", "content": cached_system_prompt()}
         ]
         if os.path.exists(HISTORY_FILE):
             os.remove(HISTORY_FILE)
@@ -35,6 +44,7 @@ with st.sidebar:
 
     st.divider()
     st.markdown(f"**Model:** `{MODEL_NAME}`")
+
 
 def load_history():
     if os.path.exists(HISTORY_FILE):
@@ -61,13 +71,13 @@ if "messages" not in st.session_state:
         st.session_state.messages = saved_msgs
     else:
         st.session_state.messages = [
-            {"role": "system", "content": get_system_prompt()}
+            {"role": "system", "content": cached_system_prompt()}
         ]
 
 def call_model():
     """Wraps Gemini API with error handling."""
     try:
-        client = genai.Client(http_options={'api_version': 'v1beta'})
+        client = get_client()
         gemini_history = []
         for msg in st.session_state.messages:
             if msg["role"] == "system":
@@ -85,7 +95,7 @@ def call_model():
             model=MODEL_NAME,
             contents=gemini_history,
             config=types.GenerateContentConfig(
-                system_instruction=get_system_prompt(),
+                system_instruction=cached_system_prompt(),
                 temperature=0.1 
             )
         )
