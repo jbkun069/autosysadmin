@@ -24,6 +24,7 @@ IF NO → Proceed to technical analysis below.
 5. get_system_info: Returns technical OS/Hardware details (Windows/Linux, CPU Model). NOT for agent identity.
 6. check_top_processes: Returns the top 5 processes consuming the most RAM.
 7. check_internet: Pings an external server to check connectivity.
+8. check_battery: Checks battery health and time left
 
 ### FORBIDDEN - DO NOT INVENT THESE:
 - check_memory (use check_ram instead)

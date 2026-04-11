@@ -112,6 +112,18 @@ def check_internet():
             
     except subprocess.CalledProcessError:
         return "Internet is OFFLINE. Ping failed."
+    
+def check_battery():
+    battery = psutil.sensors_battery()
+
+    if battery:
+        return (
+            f"Battery percentage: {battery.percent}%\n"
+            f"Plugged in: {'Yes' if battery.power_plugged else 'No'}\n"
+            f"Time left: {battery.secsleft / 60:.2f} minutes"
+        )
+    else:
+        return "No battery information available"
 
 tool_registry = {
     "get_system_info": get_system_info,
@@ -119,6 +131,7 @@ tool_registry = {
     "check_ram": check_ram,
     "check_disk": check_disk,
     "check_ddrive": check_ddrive,
-    "check_top_processes":check_top_processes,
-    "check_internet":check_internet
+    "check_top_processes": check_top_processes,
+    "check_internet": check_internet,
+    "check_battery": check_battery
 }
